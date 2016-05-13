@@ -1,5 +1,6 @@
 package pizza.holmium;
 
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -14,6 +15,28 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+
+class ContentDownloader extends AsyncTask<String, Void, String> {
+    protected String doInBackground(String... Urls){ /* Actually only the first arg will be used. */
+        String fullString = "";
+        try {
+
+            URL url = new URL(Urls[0]);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                fullString += line;
+            }
+            reader.close();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return fullString;
+    }
+}
 
 public class PizzaMain extends AppCompatActivity {
 
