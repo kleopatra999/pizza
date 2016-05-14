@@ -17,15 +17,21 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 class ContentDownloader extends AsyncTask<String, Void, String> {
-    protected String doInBackground(String... Urls){ /* Actually only the first arg will be used. */
-        String fullString = "";
-        try {
+    protected final WebView wv;
 
+    ContentDownloader(WebView uiwv){
+        wv = uiwv;
+    }
+
+    protected String doInBackground(String... Urls){ /* Actually only the first arg will be used. */
+        String Result = "";
+        try {
+            /* TODO: Time Coutrol */
             URL url = new URL(Urls[0]);
             BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
             String line;
             while ((line = reader.readLine()) != null) {
-                fullString += line;
+                Result += line;
             }
             reader.close();
         } catch (MalformedURLException e) {
@@ -34,8 +40,13 @@ class ContentDownloader extends AsyncTask<String, Void, String> {
             e.printStackTrace();
         }
 
-        return fullString;
+        return Result;
     }
+
+    protected void onPostExecute(String Result) {
+        wv.loadData(Result,"text/html", null);
+    }
+
 }
 
 public class PizzaMain extends AppCompatActivity {
@@ -57,7 +68,6 @@ public class PizzaMain extends AppCompatActivity {
         try {
             WebSettings webSettings = mainWebView.getSettings();
             webSettings.setJavaScriptEnabled(true);
-            System.out.print(Build.VERSION.RELEASE);
 
             String User_Agent = "Mozilla/5.0 (Android/" + Build.VERSION.RELEASE + "; Model/" + Build.MODEL +"; Mobile) Webkit Pizza/0.1";
             Log.i(null, "User-Agent:" + User_Agent);
@@ -65,5 +75,7 @@ public class PizzaMain extends AppCompatActivity {
         } catch (Exception e){
             PromptSomething("Cannot initializing.\n" + e.getMessage());
         }
+
+        new ContentDownloader(mainWebView).execute("https://raw.githubusercontent.com/holmium/dnsforwarder/5/StatisticTemplate.html");
     }
 }

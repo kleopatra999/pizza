@@ -9,6 +9,10 @@ public class PizzaInterface {
     public final String Name;
 
     PizzaInterface(String AppName){
+        if( AppName == null){
+
+        }
+
         Name = AppName;
     }
 
