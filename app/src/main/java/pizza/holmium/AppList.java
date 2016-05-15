@@ -65,6 +65,19 @@ class SqlHelper extends SQLiteOpenHelper {
             /* TODO: Error handling */
         }
 
+        ContentValues SecRow = new ContentValues();
+
+        SecRow.put(I_ID, "1");
+        SecRow.put(APP_NAME, "appmgr2");
+        SecRow.put(LITERAL_NAME, "AppManager2");
+        SecRow.put(LOAD_METHOD, 1);
+        SecRow.put(IS_HIDE, 1);
+        SecRow.put(URL, "https://raw.githubusercontent.com/holmium/dnsforwarder/5/StatisticTemplate.html");
+
+        if( Database.insert(TABLE_NAME, null, SecRow) < 0 ){
+            /* TODO: Error handling */
+        }
+
     }
 
     @Override

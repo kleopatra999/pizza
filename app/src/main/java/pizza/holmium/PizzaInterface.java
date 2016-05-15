@@ -54,7 +54,8 @@ public class PizzaInterface {
             if( AppName.equals(Name) ){
                 intent.putExtra("LaunchCount", LaunchCount + 1);
             }
-            intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+            //intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
             ThisContext.startActivity(intent);
         }
     }

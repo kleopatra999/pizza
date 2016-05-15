@@ -35,6 +35,8 @@ public class PizzaMain extends AppCompatActivity {
         Intent intent = getIntent();
         String AppName = intent.getStringExtra("AppName");
 
+        Utils.PromptSomething(Integer.toString(getTaskId()), this);
+
         pzi = new PizzaInterface(AppName == null ? "appmgr" : AppName, this, intent.getIntExtra("LaunchCount", 0));
         pzi.LoadContent(mainWebView);
     }
