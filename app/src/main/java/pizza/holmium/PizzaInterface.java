@@ -46,7 +46,6 @@ public class PizzaInterface {
             return ThisPackage.GetAppsInfo(name);
         }
 
-        @JavascriptInterface
         public void RunApp(String AppName){
             Intent intent = new Intent(ThisContext, PizzaMain.class);
 
@@ -54,10 +53,11 @@ public class PizzaInterface {
             if( AppName.equals(Name) ){
                 intent.putExtra("LaunchCount", LaunchCount + 1);
             }
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
-            //intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
             ThisContext.startActivity(intent);
         }
+
     }
 
     public void LoadContent(WebView wv){
