@@ -46,6 +46,7 @@ public class PizzaInterface {
             return ThisPackage.GetAppsInfo(name);
         }
 
+        @JavascriptInterface
         public void RunApp(String AppName){
             Intent intent = new Intent(ThisContext, PizzaMain.class);
 
