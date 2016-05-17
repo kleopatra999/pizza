@@ -10,6 +10,7 @@ import android.webkit.WebView;
  * Created on 5/7/16.
  */
 public class PizzaInterface {
+    public static final int MAX_CIRCUIT = 10;
     public final String Name;
 
     protected int LaunchCount;
@@ -17,17 +18,22 @@ public class PizzaInterface {
     protected AppList ThisPackage = null;
     protected AppList.AppInfo ThisApp = null;
 
-    PizzaInterface(String AppName, Context Ctxt, int Count) throws IllegalArgumentException{
-        Name = AppName;
+    PizzaInterface(String AppName, Context Ctxt, int Count) throws RuntimeException, IllegalArgumentException{
+        if( Count > MAX_CIRCUIT ){
+            throw new RuntimeException();
+        }
+
         ThisPackage = new AppList(Ctxt);
-        ThisContext = Ctxt;
-        LaunchCount = Count;
-        AppList.AppInfo[] AppInfos = ThisPackage.GetAppsInfo(Name);
+        AppList.AppInfo[] AppInfos = ThisPackage.GetAppsInfo(AppName);
         if( AppInfos != null ){
             ThisApp = AppInfos[0];
         } else {
             throw new IllegalArgumentException();
         }
+
+        Name = AppName;
+        ThisContext = Ctxt;
+        LaunchCount = Count;
     }
 
     private class ExposedInterface{
@@ -41,9 +47,33 @@ public class PizzaInterface {
             Utils.PromptSomething(Text, ThisContext);
         }
 
+        private class ExposedAppInfo{
+            public String InstallationID;
+            public String AppName;
+            public String LiteralName;
+            public String IconPath;
+            public boolean IsHide;
+            public String Url;
+        }
+
+        private ExposedAppInfo[] ToExposedAppInfo(AppList.AppInfo[] Source){
+            ExposedAppInfo[] Dest = new ExposedAppInfo[Source.length];
+
+            for(int i = 0; i < Source.length; ++i){
+                Dest[i].InstallationID = Source[i].InstallationID;
+                Dest[i].AppName = Source[i].AppName;
+                Dest[i].LiteralName = Source[i].LiteralName;
+                Dest[i].IconPath = Source[i].IconPath;
+                Dest[i].IsHide = Source[i].IsHide;
+                Dest[i].Url = Source[i].Url;
+            }
+
+            return Dest;
+        }
+
         @JavascriptInterface
-        public AppList.AppInfo[] GetAppsInfo(String... name){
-            return ThisPackage.GetAppsInfo(name);
+        public ExposedAppInfo[] GetAppsInfo(String... name){
+            return ToExposedAppInfo(ThisPackage.GetAppsInfo(name));
         }
 
         @JavascriptInterface
@@ -65,6 +95,5 @@ public class PizzaInterface {
         wv.addJavascriptInterface(new ExposedInterface(), "pz");
         ThisApp.LoadContent(wv);
     }
-
 
 }

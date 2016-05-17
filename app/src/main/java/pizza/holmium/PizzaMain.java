@@ -34,10 +34,16 @@ public class PizzaMain extends AppCompatActivity {
 
         Intent intent = getIntent();
         String AppName = intent.getStringExtra("AppName");
+        AppName = (AppName == null ? "appmgr" : AppName);
 
-        Utils.PromptSomething(Integer.toString(getTaskId()), this);
+        try {
+            pzi = new PizzaInterface(AppName, this, intent.getIntExtra("LaunchCount", 0));
+            pzi.LoadContent(mainWebView);
+        } catch (IllegalArgumentException e){
+            Utils.PromptSomething("Cannot find app:"+ AppName +".\n", this);
+        } catch(RuntimeException e){
+            Utils.PromptSomething("Max circuit exceeded.", this);
+        }
 
-        pzi = new PizzaInterface(AppName == null ? "appmgr" : AppName, this, intent.getIntExtra("LaunchCount", 0));
-        pzi.LoadContent(mainWebView);
     }
 }

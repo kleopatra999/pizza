@@ -70,9 +70,9 @@ class SqlHelper extends SQLiteOpenHelper {
         SecRow.put(I_ID, "1");
         SecRow.put(APP_NAME, "appmgr2");
         SecRow.put(LITERAL_NAME, "AppManager2");
-        SecRow.put(LOAD_METHOD, 1);
+        SecRow.put(LOAD_METHOD, 0);
         SecRow.put(IS_HIDE, 1);
-        SecRow.put(URL, "https://raw.githubusercontent.com/holmium/dnsforwarder/5/StatisticTemplate.html");
+        SecRow.put(URL, "http://app.ft.com/index_page/home");
 
         if( Database.insert(TABLE_NAME, null, SecRow) < 0 ){
             /* TODO: Error handling */
@@ -148,7 +148,7 @@ public class AppList{
             CacheDir.mkdirs();
             wv.getSettings().setAppCachePath(CacheDir.getPath());
             if(LoadMethod == LoadMethods.NORMAL_HTTP){
-                //TODO:Implement this
+                wv.loadUrl(Url);
             } else {
                 new ContentDownloader(wv).execute(Url);
             }
@@ -204,7 +204,6 @@ public class AppList{
 
         }
         Query.close();
-        Object a[] = AppList.toArray(new AppInfo[0]);
-        return AppList == null ? null : AppList.toArray(new AppInfo[0]);
+        return AppList == null ? null : AppList.toArray(new AppInfo[AppList.size()]);
     }
 }
