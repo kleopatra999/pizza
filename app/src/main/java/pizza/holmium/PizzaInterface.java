@@ -2,7 +2,6 @@ package pizza.holmium;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AlertDialog;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 
@@ -37,6 +36,8 @@ public class PizzaInterface {
     }
 
     private class ExposedInterface{
+        private AppList.AppInfo[] AllAppInfos = null;
+
         @JavascriptInterface
         public String GetThisAppName(){
             return Name;
@@ -47,33 +48,65 @@ public class PizzaInterface {
             Utils.PromptSomething(Text, ThisContext);
         }
 
-        private class ExposedAppInfo{
-            public String InstallationID;
-            public String AppName;
-            public String LiteralName;
-            public String IconPath;
-            public boolean IsHide;
-            public String Url;
-        }
-
-        private ExposedAppInfo[] ToExposedAppInfo(AppList.AppInfo[] Source){
-            ExposedAppInfo[] Dest = new ExposedAppInfo[Source.length];
-
-            for(int i = 0; i < Source.length; ++i){
-                Dest[i].InstallationID = Source[i].InstallationID;
-                Dest[i].AppName = Source[i].AppName;
-                Dest[i].LiteralName = Source[i].LiteralName;
-                Dest[i].IconPath = Source[i].IconPath;
-                Dest[i].IsHide = Source[i].IsHide;
-                Dest[i].Url = Source[i].Url;
+        @JavascriptInterface
+        public int GetAppCount(){
+            if( AllAppInfos == null ){
+                AllAppInfos = ThisPackage.GetAppsInfo();
             }
 
-            return Dest;
+            return AllAppInfos.length;
         }
 
         @JavascriptInterface
-        public ExposedAppInfo[] GetAppsInfo(String... name){
-            return ToExposedAppInfo(ThisPackage.GetAppsInfo(name));
+        public String GetAppName(int Index){
+            if( AllAppInfos == null ){
+                AllAppInfos = ThisPackage.GetAppsInfo();
+            }
+
+            if( Index > AllAppInfos.length ){
+                return null;
+            } else {
+                return AllAppInfos[Index].AppName;
+            }
+        }
+
+        @JavascriptInterface
+        public String GetAppLiteralname(int Index){
+            if( AllAppInfos == null ){
+                AllAppInfos = ThisPackage.GetAppsInfo();
+            }
+
+            if( Index > AllAppInfos.length ){
+                return null;
+            } else {
+                return AllAppInfos[Index].LiteralName;
+            }
+        }
+
+        @JavascriptInterface
+        public String GetAppUrl(int Index){
+            if( AllAppInfos == null ){
+                AllAppInfos = ThisPackage.GetAppsInfo();
+            }
+
+            if( Index > AllAppInfos.length ){
+                return null;
+            } else {
+                return AllAppInfos[Index].Url;
+            }
+        }
+
+        @JavascriptInterface
+        public boolean GetAppIsHide(int Index){
+            if( AllAppInfos == null ){
+                AllAppInfos = ThisPackage.GetAppsInfo();
+            }
+
+            if( Index > AllAppInfos.length ){
+                return true;
+            } else {
+                return AllAppInfos[Index].IsHide;
+            }
         }
 
         @JavascriptInterface
