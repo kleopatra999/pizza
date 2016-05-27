@@ -57,9 +57,9 @@ class SqlHelper extends SQLiteOpenHelper {
         FirstRow.put(I_ID, "0");
         FirstRow.put(APP_NAME, "appmgr");
         FirstRow.put(LITERAL_NAME, "AppManager");
-        FirstRow.put(LOAD_METHOD, 1);
+        FirstRow.put(LOAD_METHOD, 0);
         FirstRow.put(IS_HIDE, 1);
-        FirstRow.put(URL, "https://raw.githubusercontent.com/holmium/test/master/1.html");
+        FirstRow.put(URL, "file:///storage/sdcard0/1.html");
 
         if( Database.insert(TABLE_NAME, null, FirstRow) < 0 ){
             /* TODO: Error handling */
@@ -182,7 +182,7 @@ public class AppList{
                 SqlHelper.IS_HIDE,
                 SqlHelper.URL
         };
-        String WhereClause = AppNames == null ? null : SqlHelper.APP_NAME + " = ?";
+        String WhereClause = (AppNames == null || AppNames.length == 0) ? null : SqlHelper.APP_NAME + " = ?";
 
         Query = Database.query(SqlHelper.TABLE_NAME, QueryKeys, WhereClause, AppNames, null, null, null, null);
 
