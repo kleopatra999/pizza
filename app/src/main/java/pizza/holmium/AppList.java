@@ -68,11 +68,11 @@ class SqlHelper extends SQLiteOpenHelper {
         ContentValues SecRow = new ContentValues();
 
         SecRow.put(I_ID, "1");
-        SecRow.put(APP_NAME, "appmgr2");
-        SecRow.put(LITERAL_NAME, "AppManager2");
+        SecRow.put(APP_NAME, "webbrowser");
+        SecRow.put(LITERAL_NAME, "Web Browser");
         SecRow.put(LOAD_METHOD, 0);
         SecRow.put(IS_HIDE, 1);
-        SecRow.put(URL, "http://app.ft.com/index_page/home");
+        SecRow.put(URL, "file:///storage/sdcard0/2.html");
 
         if( Database.insert(TABLE_NAME, null, SecRow) < 0 ){
             /* TODO: Error handling */
