@@ -19,6 +19,8 @@ public class PizzaMain extends AppCompatActivity {
         WebView mainWebView = (WebView) findViewById(R.id.mainview);
 
         try {
+            WebView.setWebContentsDebuggingEnabled(true);
+
             WebSettings webSettings = mainWebView.getSettings();
             webSettings.setJavaScriptEnabled(true);
             webSettings.setDomStorageEnabled(true);

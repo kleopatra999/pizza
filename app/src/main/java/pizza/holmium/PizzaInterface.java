@@ -17,6 +17,8 @@ public class PizzaInterface {
     protected AppList ThisPackage = null;
     protected AppList.AppInfo ThisApp = null;
 
+    protected WebView ThisWebView = null;
+
     PizzaInterface(String AppName, Context Ctxt, int Count) throws RuntimeException, IllegalArgumentException{
         if( Count > MAX_CIRCUIT ){
             throw new RuntimeException();
@@ -122,9 +124,19 @@ public class PizzaInterface {
             ThisContext.startActivity(intent);
         }
 
+        @JavascriptInterface
+        public boolean SetAllowUniversalAccess(boolean flag){
+            if(ThisApp.LoadMethod != AppList.LoadMethods.ORDINARY_HTML){
+                return false;
+            } else {
+                ThisWebView.getSettings().setAllowUniversalAccessFromFileURLs(flag);
+                return flag;
+            }
+        }
     }
 
     public void LoadContent(WebView wv){
+        ThisWebView = wv;
         wv.addJavascriptInterface(new ExposedInterface(), "pz");
         ThisApp.LoadContent(wv);
     }

@@ -97,7 +97,7 @@ class ContentDownloader extends AsyncTask<String, Void, String> {
     protected String doInBackground(String... Urls){ /* Actually only the first arg will be used. */
         String Result = "";
         try {
-            /* TODO: Time Coutrol */
+            /* TODO: Timeout Control */
             URL url = new URL(Urls[0]);
             BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
             String line;
@@ -115,9 +115,8 @@ class ContentDownloader extends AsyncTask<String, Void, String> {
     }
 
     protected void onPostExecute(String Result) {
-        wv.loadData(Result,"text/html", null);
+        wv.loadDataWithBaseURL("file:///android_asset/",Result,"text/html",null,null);
     }
-
 }
 
 public class AppList{
