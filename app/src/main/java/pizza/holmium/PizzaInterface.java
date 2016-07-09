@@ -5,6 +5,10 @@ import android.content.Intent;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 /**
  * Created on 5/7/16.
  */
@@ -41,13 +45,15 @@ public class PizzaInterface {
         private AppList.AppInfo[] AllAppInfos = null;
 
         @JavascriptInterface
-        public String GetThisAppName(){
-            return Name;
-        }
-
-        @JavascriptInterface
         public void Echo(String Text){
             Utils.PromptSomething(Text, ThisContext);
+        }
+
+        /* App Infos % Manipulations */
+
+        @JavascriptInterface
+        public String GetThisAppName(){
+            return Name;
         }
 
         @JavascriptInterface
@@ -124,15 +130,41 @@ public class PizzaInterface {
             ThisContext.startActivity(intent);
         }
 
+        /* File Handlings */
         @JavascriptInterface
-        public boolean SetAllowUniversalAccess(boolean flag){
-            if(ThisApp.LoadMethod != AppList.LoadMethods.ORDINARY_HTML){
-                return false;
-            } else {
-                ThisWebView.getSettings().setAllowUniversalAccessFromFileURLs(flag);
-                return flag;
+        public String EnumerateDir(String Parent, String Child){
+            File TheFile;
+
+            try {
+                TheFile = new File(Parent, Child);
+            } catch (NullPointerException e){
+                return String.valueOf(Utils.ErrorType.INVALID_ARGUMENT);
             }
+
+            File[] FileList;
+
+            try {
+                FileList = TheFile.listFiles();
+                if( FileList == null ){
+                    return String.valueOf(Utils.ErrorType.PERMISSION_DENIED);
+                }
+            } catch (SecurityException e){
+                return String.valueOf(Utils.ErrorType.PERMISSION_DENIED);
+            }
+
+            String Ret = "\n";
+
+            for( File aFile : FileList ){
+                if(aFile.isDirectory()){
+                    Ret += (aFile.getName() + File.separator + "\n");
+                } else {
+                    Ret += (aFile.getName() + "\n");
+                }
+            }
+
+            return Ret;
         }
+
     }
 
     public void LoadContent(WebView wv){
