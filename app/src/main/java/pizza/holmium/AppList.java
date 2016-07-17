@@ -59,7 +59,7 @@ class SqlHelper extends SQLiteOpenHelper {
         FirstRow.put(LITERAL_NAME, "AppManager");
         FirstRow.put(LOAD_METHOD, 0);
         FirstRow.put(IS_HIDE, 1);
-        FirstRow.put(URL, "file:///storage/sdcard0/1.html");
+        FirstRow.put(URL, "file:///sdcard/1.html");
 
         if( Database.insert(TABLE_NAME, null, FirstRow) < 0 ){
             /* TODO: Error handling */
@@ -72,7 +72,7 @@ class SqlHelper extends SQLiteOpenHelper {
         SecRow.put(LITERAL_NAME, "File Manager");
         SecRow.put(LOAD_METHOD, 0);
         SecRow.put(IS_HIDE, 1);
-        SecRow.put(URL, "file:///storage/sdcard0/2.html");
+        SecRow.put(URL, "file:///sdcard/2.html");
 
         if( Database.insert(TABLE_NAME, null, SecRow) < 0 ){
             /* TODO: Error handling */

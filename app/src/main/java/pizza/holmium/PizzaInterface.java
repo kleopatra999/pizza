@@ -2,12 +2,12 @@ package pizza.holmium;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.webkit.JavascriptInterface;
+import android.webkit.MimeTypeMap;
 import android.webkit.WebView;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 /**
  * Created on 5/7/16.
@@ -156,13 +156,38 @@ public class PizzaInterface {
 
             for( File aFile : FileList ){
                 if(aFile.isDirectory()){
-                    Ret += (aFile.getName() + File.separator + "\n");
+                    Ret += (String.valueOf(aFile.lastModified()) + "\r" + "Dir\r" + aFile.getName() + File.separator + "\n");
                 } else {
-                    Ret += (aFile.getName() + "\n");
+                    Ret += (String.valueOf(aFile.lastModified()) + "\r" + aFile.length() + "\r" + aFile.getName() + "\n");
                 }
+
             }
 
             return Ret;
+        }
+
+        private String GetFileExtension(String Path){
+            int SlashPos = Path.lastIndexOf(File.separatorChar);
+
+            int DotPos = Path.lastIndexOf('.');
+
+            if( DotPos < SlashPos || DotPos < 0 || DotPos == Path.length() - 1 ){
+                return null;
+            } else {
+                return Path.substring(DotPos + 1);
+            }
+        }
+
+        @JavascriptInterface
+        public void ExecuteAFile(String Path, String mime){
+            Intent i = new Intent();
+
+            i.setAction(android.content.Intent.ACTION_VIEW);
+
+            String MimeType = mime == null ? MimeTypeMap.getSingleton().getMimeTypeFromExtension(GetFileExtension(Path)) : mime;
+
+            i.setDataAndType(Uri.fromFile(new File(Path)), MimeType == null ? "*/*" : MimeType);
+            ThisContext.startActivity(i);
         }
 
     }
