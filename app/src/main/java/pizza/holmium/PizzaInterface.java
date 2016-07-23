@@ -1,11 +1,18 @@
 package pizza.holmium;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.webkit.JavascriptInterface;
+import android.webkit.JsPromptResult;
+import android.webkit.JsResult;
 import android.webkit.MimeTypeMap;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
+import android.widget.EditText;
 
 import java.io.File;
 
@@ -166,13 +173,14 @@ public class PizzaInterface {
             return Ret;
         }
 
+        @NonNull
         private String GetFileExtension(String Path){
             int SlashPos = Path.lastIndexOf(File.separatorChar);
 
             int DotPos = Path.lastIndexOf('.');
 
             if( DotPos < SlashPos || DotPos < 0 || DotPos == Path.length() - 1 ){
-                return null;
+                return "";
             } else {
                 return Path.substring(DotPos + 1);
             }
@@ -194,6 +202,76 @@ public class PizzaInterface {
 
     public void LoadContent(WebView wv){
         ThisWebView = wv;
+
+        ThisWebView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public boolean onJsAlert(WebView view, String url, String message, final JsResult result) {
+                AlertDialog.Builder alert = new AlertDialog.Builder(ThisContext);
+                alert.setMessage(message);
+                alert.setPositiveButton(android.R.string.ok,
+                        new AlertDialog.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                result.confirm();
+                            }
+                    });
+                alert.setCancelable(false);
+                alert.show();
+
+                return true;
+            }
+
+            @Override
+            public boolean onJsConfirm(WebView view, String url, String message, final JsResult result) {
+                AlertDialog.Builder alert = new AlertDialog.Builder(ThisContext);
+                alert.setMessage(message);
+                alert.setPositiveButton(android.R.string.ok,
+                        new AlertDialog.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                result.confirm();
+                            }
+                        });
+
+                alert.setNegativeButton(android.R.string.cancel,
+                        new AlertDialog.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                result.cancel();
+                            }
+                        });
+
+                alert.setCancelable(false);
+                alert.show();
+
+                return true;
+            }
+
+            @Override
+            public boolean onJsPrompt(WebView view, String url, String message, String defaultValue, final JsPromptResult result) {
+                final EditText TextBox = new EditText(ThisContext);
+                AlertDialog.Builder alert = new AlertDialog.Builder(ThisContext);
+                TextBox.setText(defaultValue);
+                alert.setView(TextBox);
+                alert.setMessage(message);
+                alert.setPositiveButton(android.R.string.ok,
+                        new AlertDialog.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                result.confirm(TextBox.getText().toString());
+                            }
+                        });
+
+                alert.setNegativeButton(android.R.string.cancel,
+                        new AlertDialog.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                result.cancel();
+                            }
+                        });
+
+                alert.setCancelable(false);
+                alert.show();
+
+                return true;
+            }
+        });
+
         wv.addJavascriptInterface(new ExposedInterface(), "pz");
         ThisApp.LoadContent(wv);
     }
