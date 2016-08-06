@@ -14,7 +14,14 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.EditText;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 
 /**
  * Created on 5/7/16.
@@ -148,12 +155,20 @@ public class PizzaInterface {
                 return String.valueOf(Utils.ErrorType.INVALID_ARGUMENT);
             }
 
+            if( !TheFile.exists() ){
+                return String.valueOf(Utils.ErrorType.NO_SUCH_FILE_OR_DIRECTORY);
+            }
+
+            if( !TheFile.canRead() ){
+                return String.valueOf(Utils.ErrorType.PERMISSION_DENIED);
+            }
+
             File[] FileList;
 
             try {
                 FileList = TheFile.listFiles();
                 if( FileList == null ){
-                    return String.valueOf(Utils.ErrorType.PERMISSION_DENIED);
+                    return String.valueOf(Utils.ErrorType.INVALID_ARGUMENT);
                 }
             } catch (SecurityException e){
                 return String.valueOf(Utils.ErrorType.PERMISSION_DENIED);
@@ -198,6 +213,62 @@ public class PizzaInterface {
             ThisContext.startActivity(i);
         }
 
+        @JavascriptInterface
+        public String ReadTextFile(String Path, String Encoding){
+            File f = new File(Path);
+
+            if( f.isDirectory() ){
+                return null;
+            }
+
+            if( !f.canRead() ){
+                return null;
+            }
+
+            long l = f.length();
+
+            if( l > (long)Integer.MAX_VALUE ){
+                return null;
+            }
+
+            byte[] b = new byte[(int)l];
+
+            try{
+                BufferedInputStream buf = new BufferedInputStream(new FileInputStream(f));
+                buf.read(b, 0, b.length);
+                buf.close();
+            }catch (FileNotFoundException e){
+                return null;
+            } catch (IOException e){
+                return null;
+            }
+
+            try {
+                return new String(b, Encoding == null ? "UTF-8" : Encoding);
+            } catch (UnsupportedEncodingException e){
+                return null;
+            }
+        }
+
+        @JavascriptInterface
+        public boolean WriteTextFile(String Path, String Content){
+            File f = new File(Path);
+
+            if( f.isDirectory() ){
+                return false;
+            }
+
+            try {
+                OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(f, false));
+                out.write(Content, 0, Content.length());
+                out.close();
+            } catch (FileNotFoundException e){
+                return false;
+            } catch (IOException e){
+                return false;
+            }
+            return true;
+        }
     }
 
     public void LoadContent(WebView wv){
