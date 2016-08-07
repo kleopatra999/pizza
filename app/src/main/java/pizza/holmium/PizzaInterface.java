@@ -189,11 +189,11 @@ public class PizzaInterface {
         }
 
         @JavascriptInterface
-        public boolean DeleteFile(String Path){
+        public boolean DeleteFile(String Parent, String Child){
             File TheFile;
 
             try {
-                TheFile = new File(Path);
+                TheFile = new File(Parent, Child);
             } catch (NullPointerException e){
                 return false;
             }
