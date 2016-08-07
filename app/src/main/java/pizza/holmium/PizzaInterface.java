@@ -188,6 +188,23 @@ public class PizzaInterface {
             return Ret;
         }
 
+        @JavascriptInterface
+        public boolean DeleteFile(String Path){
+            File TheFile;
+
+            try {
+                TheFile = new File(Path);
+            } catch (NullPointerException e){
+                return false;
+            }
+
+            try {
+                return TheFile.delete();
+            } catch(SecurityException e) {
+                return false;
+            }
+        }
+
         @NonNull
         private String GetFileExtension(String Path){
             int SlashPos = Path.lastIndexOf(File.separatorChar);
@@ -215,7 +232,13 @@ public class PizzaInterface {
 
         @JavascriptInterface
         public String ReadTextFile(String Path, String Encoding){
-            File f = new File(Path);
+            File f;
+
+            try {
+                f = new File(Path);
+            } catch (NullPointerException e){
+                return null;
+            }
 
             if( f.isDirectory() ){
                 return null;
@@ -252,7 +275,13 @@ public class PizzaInterface {
 
         @JavascriptInterface
         public boolean WriteTextFile(String Path, String Content){
-            File f = new File(Path);
+            File f;
+
+            try {
+                f = new File(Path);
+            } catch (NullPointerException e){
+                return false;
+            }
 
             if( f.isDirectory() ){
                 return false;
